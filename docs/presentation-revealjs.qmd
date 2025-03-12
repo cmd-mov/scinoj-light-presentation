@@ -1,0 +1,293 @@
+
+---
+format:
+  revealjs: {theme: solarized, navigation-mode: vertical, transition: slide, background-transition: fade, incremental: true, output-file: presentation-revealjs.html}
+code-block-background: true
+
+---
+<style></style><style>.printedClojure .sourceCode {
+  background-color: transparent;
+  border-style: none;
+}
+</style><style>.clay-limit-image-width .clay-image {max-width: 100%}
+.clay-side-by-side .sourceCode {margin: 0}
+.clay-side-by-side {margin: 1em 0}
+</style>
+<script src="presentation-revealjs_files/md-default0.js" type="text/javascript"></script><script src="presentation-revealjs_files/md-default1.js" type="text/javascript"></script>
+---
+title: Towards a calibrated problem set for Tik Tik
+author: Cvetomir Dimov
+format:
+  revealjs: 
+    theme: dracula
+---
+
+To do:
+- small introduction to problem
+- practical implication
+- introduce linear regression
+
+
+## The Task: Tik Tik
+
+
+```{=html}
+<div style="text-align:center;"><video controls=""><source src="notebooks/videos/Demo.webm" type="video/mp4" /></video></div>
+```
+
+
+
+## Project goal
+1. Create a problem set, which is:
+- within the general population's abilities
+- varies systemamically in difficulty
+- takes about an hour to complete
+2. Identify level parameters that determine level difficulty
+
+
+## Designing levels
+
+
+```{=html}
+<div style="display:flex;"><div style="flex:50%;"><image src="notebooks/images/Level103001.png"></image></div><div style="flex:50%;"><image src="notebooks/images/Level119044.png"></image></div></div>
+```
+
+
+Number of barriers and number of barrier intersections.
+
+
+## Problem creator and solver (in Clojure & Quil)
+
+::: {.clay-image}
+
+```{=html}
+<img class="clay-image" src="notebooks/images/LevelCreator.png" />
+```
+
+:::
+
+
+
+## Study 1
+- 29 levels: 9 warmup levels + 20 main levels (between 1 and 5 blockages)
+- 49 subjects (online platform Prolific)
+- about 1.5 hours of total time
+
+
+## Load data
+
+::: {.clay-dataset}
+Tik Tik study 1 data [2256 6]:
+
+|   :subject | :problem | :attempt |  :duration | :blocks | :success |
+|------------|---------:|---------:|-----------:|--------:|----------|
+| ihezj9FJFR |   103001 |        0 |  20.684570 |       1 |     true |
+| ihezj9FJFR |   102001 |        0 |  14.268070 |       1 |    false |
+| ihezj9FJFR |   102001 |        1 |   9.900391 |       3 |     true |
+| ihezj9FJFR |   101015 |        0 |  15.850590 |       2 |     true |
+| ihezj9FJFR |   114040 |        0 |  32.121090 |       2 |     true |
+| ihezj9FJFR |   105007 |        0 |  42.753420 |       5 |     true |
+| ihezj9FJFR |   113030 |        0 |  43.702880 |       2 |     true |
+| ihezj9FJFR |   103026 |        0 |  25.784910 |       3 |     true |
+| ihezj9FJFR |   115011 |        0 |  38.869140 |       3 |     true |
+| ihezj9FJFR |   104014 |        0 |  36.720210 |       3 |     true |
+|        ... |      ... |      ... |        ... |     ... |      ... |
+| SbdjrYVUry |   139693 |        1 | 105.703400 |       8 |    false |
+| SbdjrYVUry |   139693 |        2 | 180.005700 |      13 |     true |
+| SbdjrYVUry |   142090 |        0 | 162.505100 |      11 |    false |
+| SbdjrYVUry |   142090 |        1 | 180.005800 |      14 |     true |
+| SbdjrYVUry |   138017 |        0 | 180.005900 |      16 |     true |
+| SbdjrYVUry |   103001 |        0 |  33.617730 |       1 |     true |
+| SbdjrYVUry |   102001 |        0 |  57.385290 |       2 |     true |
+| SbdjrYVUry |   101015 |        0 |  30.050870 |       2 |     true |
+| SbdjrYVUry |   114040 |        0 |  46.401490 |       2 |     true |
+| SbdjrYVUry |   105007 |        0 | 136.020700 |      10 |     true |
+| SbdjrYVUry |   113030 |        0 |  94.902980 |       6 |     true |
+
+
+:::
+
+
+
+## Summarize by subject and level
+
+
+
+
+
+
+
+
+
+
+
+## Loading level characterization
+
+
+
+
+
+
+
+
+
+
+
+## Subject performance
+
+
+
+
+
+
+
+
+
+## Subject performance (cont'd)
+
+
+
+
+
+
+
+
+## Level performance
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Number of attempts and solution time
+
+
+
+
+
+
+
+
+
+## Optimal solution frequency and number of attempts
+
+
+
+
+
+
+
+
+
+## Summary on Level difficulty
+- The various measures of level difficulty highly correlate
+- We will use the frequecy of optimal solution as a measure of level difficulty
+- We still needs to find predictors of level difficulty, which include:
+  - optimal solution length
+  - search space size
+  - trimmed search space size
+
+
+## Number of blockages in optimal solution
+
+
+
+
+
+
+
+
+
+## Search space size
+
+
+
+
+
+
+
+
+
+## Trimmed search space size
+
+
+
+
+
+
+
+
+
+## Load helper functions for linear regression
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Linear regression
+
+
+
+
+
+
+
+
+
+## Linear regression (cont'd)
+
+
+
+## Conclusion
+- There are large individual differences in performance on Tik Tik
+- Our problem set is within subject abilities, albeit a little difficult
+- The trimmed search space size is the strongest predictor of level difficulty, together with the number of blockages in optimal solution
+
+
+```{=html}
+<div style="background-color:grey;height:2px;width:100%;"></div>
+```
+
+
+
+```{=html}
+<div><pre><small><small>source: presentation.clj</small></small></pre></div>
+```
