@@ -6,16 +6,18 @@
 ;;     theme: dracula
 ;; ---
 
+;; ## Collaborative Problem Solving
 ^{:kindly/hide-code true}
 (ns presentation
   (:require [tablecloth.api :as tc]
             [tablecloth.column.api :as tcc]
             [scicloj.kindly.v4.kind :as kind]
             [scicloj.tableplot.v1.plotly :as plotly]
+            [scicloj.metamorph.ml :as ml]
+            [scicloj.ml.tribuo]
             [tech.v3.dataset.modelling :as ds-mod]
             [fastmath.ml.regression :as reg]))
 
-;; ## Collaborative Problem Solving
 ;; 1. *What is it?*
 ;; - a group goal that needs to be accomplished through problem solving
 ;; - a single individual cannot solve the problem alone
@@ -23,9 +25,12 @@
 
 ;; ## Collaborative Problem Solving
 ;; 2. *How important is it?*
-;; - one of the **essential** 21st century skills (project Assesment and Teaching of 21st century skills)
+;;
+;; One of the **essential** 21st century skills (according to AT21CS)
+;;
 ;; 3. *Why is it so important?*
-;; - many contemporary problems require teams of individuals with different expertise and background
+;; 
+;; Many contemporary problems require teams of individuals with different expertise and background
 
 ;; ## Collaborative Planning
 ;; - envision alternative courses of action
@@ -37,9 +42,7 @@
 ^{:kindly/hide-code true}
 (kind/hiccup 
  [:div {:style {:text-align "center"}}
-  (kind/video {:src "notebooks/videos/Demo.webm"
-               :iframe-width 800
-               :iframe-height 560})])
+  (kind/video {:src "notebooks/videos/Demo.webm"})])
 
 ;; ## Project goal
 ;; 1. Create a problem set, which is:
@@ -72,12 +75,13 @@
 (kind/image
  {:src "notebooks/images/LevelCreator.png"})
 
-;; ## Study 1
+;; ## Study
 ;; - *29 levels*: 9 warmup levels + 20 main levels (between 1 and 5 blockages)
-;; - *49 subjects* (online platform Prolific)
+;; - *46 subjects* (online platform Prolific)
 ;; - about *1.5 hours* of total time
+;; - there is a **blockage limit** and an optimal blockage number (i.e., **optimal solution length**) for each level
 ;; - subjects received *1 bonus point* for a correct solution and *3 bonus points* for an optimal solution
-;;
+
 
 ^{:kindly/hide-code true}
 (def tiktik-data-study1
@@ -87,12 +91,12 @@
 ^{:kindly/hide-code true}
 (def subject-problem-summary
   (-> tiktik-data-study1
-      (tc/group-by [:user :problem])
+      (tc/group-by [:subject :problem])
       (tc/aggregate {:attempts tc/row-count
                      :tot-duration #(reduce + (% :duration)) 
                      :blocks-tot #(last (:blocks %))
                      :solved? #(last (:success %))})
-      (tc/order-by [:user :problem])))
+      (tc/order-by [:subject :problem])))
 
 ^{:kindly/hide-code true}
 (def problems-characterization
@@ -108,19 +112,22 @@
 ^{:kindly/hide-code true}
 (def subject-summary
   (-> subject-problem-summary+
-      (tc/group-by [:user])
+      (tc/group-by [:subject])
       (tc/aggregate {:attempted-problems tc/row-count
                      :solved #(tcc/sum (:solved? %))
                      :solved-optimally #(tcc/sum (:optimal? %))})))
 
+^{:kindly/hide-code true}
 (-> subject-summary
+    (plotly/base {:=width 700 :=height 500})
     (plotly/layer-point
      {:=x :solved
       :=y :solved-optimally
       :=x-title "Number of problems solved"
-      :=y-title "Number of problems solved optimally"}))
+      :=y-title "Number of problems solved optimally"
+      }))
 
-;; ## Level difficulty
+;; ## Problem difficulty
 ^{:kindly/hide-code true}
 (def problem-summary
   (-> subject-problem-summary+
@@ -132,25 +139,54 @@
       (tc// :optimal-solution-rate [:solved-optimally :attempted-by])
       (tc/left-join problems-characterization [:problet])))
 
-;; ^{:kindly/hide-code true}
-;; (-> problem-summary
-;;     (plotly/base {:=x :median-solution-time
-;;                   :=y :optimal-solution-rate})
-;;     (plotly/layer-smooth {:=name "Linear fit"})
-;;     (plotly/layer-point {:=name "Data"
-;;                          :=y-title "Median number of attempts"
-;;                          :=x-title "Median time spent in level (s)"}))
-;; TODO Maybe use solution rate and optimal solution rate
-
-;; ## Summary on Level difficulty
-;; - levels are solved optimally at rates between X and Y
-;; - very few levels are
+^{:kindly/hide-code true}
+(kind/hiccup
+ [:div {:style {:display "flex"}}
+  [:div {:style {:flex "50%"}}
+   (-> problem-summary
+       (plotly/base {:=x :median-solution-time
+                     :=y :optimal-solution-rate})
+       (plotly/layer-smooth {:=name "Linear fit"})
+       (plotly/layer-point {:=name "Data"
+                            :=x-title "Median solution time"
+                            :=y-title "Optimal solution rate"}))]
+  [:div {:style {:flex "50%"}}
+   [:ul
+    [:li "Problems vary widely in difficulty"]
+    [:li "More difficult problems take longer and are more rarely solved optimally"]]]])
 
 ;; ## Which problem properties predict how difficult it is?
 ;; We still needs to find predictors of level difficulty, which include:
+;;
 ;;  - optimal solution length - the minimum number of blockages needed to solve a level
 ;;  - search space size - the number of possible sequences of blockages that can be taken
 ;;  - trimmed search space size - the search space size up to length equal to that of the optimal solution
+
+;; ## Predictors of level difficulty
+#_(def logistic-model
+    (reg/glm
+     ;; ys - a "column" sequence of `y` values:
+     (-> subject-problem-summary+
+         (tc/map-columns :optimal [:optimal?] #(if % 1 0))
+         :optimal)
+     ;; xss - a sequence of "rows", each containing `x` values:
+     ;; (one `x` per row, in our case):
+     (-> subject-problem-summary+
+         (tc/select-columns [:optimal-solution-length :trimmed-search-space])
+         tc/rows)
+     ;; options
+     {:family :gaussian}))
+
+^{:kindly/hide-code true}
+(kind/hiccup
+ [:div {:style {:display "flex"}}
+  [:div {:style {:flex "50%"}}
+   [:image {:src "notebooks/images/study1_OptimalSolutionRate_Predictiors.png" :width 500 :height 500}]]
+  [:div {:style {:flex "50%"}}
+   [:ul
+    [:li "Optimal solution length: r = -0.67"]
+    [:li "Search space size: r = -0.64"]
+    [:li "Trimmed search space size: r = -0.82"]]]])
 
 ;; ## A quick introduction to logistic regression
 ^{:kindly/hide-code true}
@@ -163,16 +199,20 @@
   [:div {:style {:flex "50%"}}
    [:image {:src "notebooks/images/LogisticCurve.jpg"}]]])
 
-;; ## Predictors of level difficulty
+;; ## Logistic model prediction
+^{:kindly/hide-code true}
+(kind/image
+ {:src "notebooks/images/study1_OptimSolutionRate_Logistic.png"
+  :height 500})
 
 ;; ## Summary
 ;; - There are large individual differences in performance on Tik Tik
 ;; - Our problem set is within subject abilities, albeit a little difficult
-;; - The trimmed search space size is the strongest predictor of level difficulty, together with the optimal solution length
+;; - The **trimmed search space size** is the strongest predictor of level difficulty, together with the **optimal solution length**
 
 ;; ## Conclusion
 ;; - A callibrated problem set will enable us to measure collaborative planning performance precisely
 ;; - When combined with measures of various cognitive and social abilities, it will allow us to determine the relative contribution of these abilities.
 
 ^{:kindly/hide-code true}
-(kind/hiccup [:small [:p "Made with: Quil (problem solver), Noj (data analysis), Clay (data analysis + presentation)"]])
+(kind/hiccup [:small [:p "Made with: Quil (problem solver), Noj libraries (data analysis), R (data analysis), Clay (data analysis + presentation)"]])
