@@ -85,7 +85,7 @@
 
 ^{:kindly/hide-code true}
 (def tiktik-data-study1
-  (tc/dataset "notebooks/data/study1/study1_attempts.nippy"
+  (tc/dataset "data/study1/study1_attempts.nippy"
               {:dataset-name "Tik Tik study 1 data"}))
 
 ^{:kindly/hide-code true}
@@ -100,7 +100,7 @@
 
 ^{:kindly/hide-code true}
 (def problems-characterization
-  (tc/dataset "notebooks/data/problem_characterization_studies12.nippy"))
+  (tc/dataset "data/problem_characterization_studies12.nippy"))
 
 ^{:kindly/hide-code true}
 (def subject-problem-summary+
@@ -216,3 +216,9 @@
 
 ^{:kindly/hide-code true}
 (kind/hiccup [:small [:p "Made with: Quil (problem solver), Noj libraries (data analysis), R (data analysis), Clay (data analysis + presentation)"]])
+
+
+
+
+
+
