@@ -1,0 +1,4 @@
+{:remote-repo {:git-url "https://github.com/cmd-mov"
+               :branch "main"}
+ :base-target-path "temp"}
+
