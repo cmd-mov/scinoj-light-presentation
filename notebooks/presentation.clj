@@ -175,7 +175,8 @@
          (tc/select-columns [:optimal-solution-length :trimmed-search-space])
          tc/rows)
      ;; options
-     {:family :gaussian}))
+     {:family :binomial
+      :tol 0.5}))
 
 ^{:kindly/hide-code true}
 (kind/hiccup
