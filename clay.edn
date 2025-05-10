@@ -1,4 +1,19 @@
 {:remote-repo {:git-url "https://github.com/cmd-mov"
                :branch "main"}
- :base-target-path "temp"}
+ :base-target-path "temp"
+ :page-layout :full
+ :quarto {:format {:html
+                   {:toc true
+                    :toc-depth 4
+                    :theme [:cosmo "notebooks/custom.scss"]
+                    :page-layout :full
+                    :grid
+                    {:sidebar-width "300px"
+                     :body-width "1500px"
+                     :margin-width "300px"}
+                    }}
+          :fontsize "0.9em"
+          :code-block-background true
+          :include-in-header {:text "<link rel = \"icon\" href = \"data:,\" />"}}
+ }
 
