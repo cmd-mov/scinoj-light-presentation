@@ -20,13 +20,13 @@
 
 ;; ## Outline
 ;;
-;; 1. Why study problem solving?
-;; 2. Tik Tik
-;; 3. Creating problems in Tik Tik
-;; 4. Planning and goals of this project
-;; 5. Study 1
-;; 6. Study 2
-;; 7. Conclusion
+;; - Why study problem solving?
+;; - Tik Tik
+;; - Creating problems in Tik Tik
+;; - Planning and goals of this project
+;; - Study 1
+;; - Study 2
+;; - Conclusion
 
 ;; ## Problem solving
 ;;
@@ -95,22 +95,22 @@
       [:li "within the general population's abilities"]
       [:li "varies systematically in difficulty"]
       [:li "takes about an hour to complete"]]]
-    [:li "Identify problem parameters that determine level difficulty"]])
+    [:li "Identify problem parameters that determine problem difficulty"]])
 
 ;; ## Study 1: Pilot
 ;; **Creating a problem set**
 
-;; - systematically vary the *optimal solution length* (i.e., the minimum number of blockages necessary to solve a level)
-;; - systematically vary *search space size* (i.e., the number of unique paths in a level)
+;; - systematically vary the *optimal solution length* (i.e., the minimum number of blockages necessary to solve a problem)
+;; - systematically vary *search space size* (i.e., the number of unique paths in a problem)
 ;; - only one optimal solution
 
 ;; **Participants and procedures**
 
-;; - *29 levels*: 9 warmup levels + 20 main levels (between 1 and 5 blockages)
+;; - *29 problems*: 9 warmup problems + 20 main problems (between 1 and 5 blockages)
 ;; - *46 subjects* (online platform Prolific)
-;; - an extensive tutorial, followed by 29 levels
+;; - an extensive tutorial, followed by 29 problems
 ;; - about *1.5 hours* of total time
-;; - provide *optimal solution length* and *blockage limit* (= 10 x OSL) for each level
+;; - provide *optimal solution length* and *blockage limit* (= 10 x OSL) for each problem
 ;; - subjects received *1 bonus point* for a correct solution and *3 bonus points* for an optimal solution
 
 ^{:kindly/hide-code true}
@@ -131,16 +131,17 @@
  [:div {:style {:display "flex"}}
   [:div {:style {:flex "50%"}}
    (-> subject-summary
-    (plotly/base {:=width 700 :=height 500})
     (plotly/layer-point
      {:=x :solved
       :=y :solved-optimally
       :=x-title "Number of problems solved"
       :=y-title "Number of problems solved optimally"
+      :=mark-size 10
+      :=mark-color "black"
       }))]
   [:div {:style {:flex "50%"}}
    [:ul
-    [:li "Only 25 out of 46 subjects attempted all levels"]
+    [:li "Only 25 out of 46 subjects attempted all problems"]
     [:li "Very few problems solved optimally"]]]])
 
 ;; ## Problem difficulty
@@ -169,7 +170,7 @@
     [:li "Problems vary widely in difficulty"]
     [:li "More difficult problems take longer and are more rarely solved optimally"]]]])
 
-;; ## Predictors of level difficulty
+;; ## Predictors of problem difficulty
 ^{:kindly/hide-code true}
 (kind/hiccup
  [:div {:style {:display "flex"}}
@@ -177,7 +178,7 @@
    [:image {:src "notebooks/images/study1_OptimalSolutionRate_Predictiors.png" :width 500 :height 500}]]
   [:div {:style {:flex "50%"}}
    [:ul
-    [:li "Optimal solution length: r = -0.67 (the minimum number of blockages needed to solve a level)"]
+    [:li "Optimal solution length: r = -0.67 (the minimum number of blockages needed to solve a problem)"]
     [:li "Search space size: r = -0.64 (the number of possible sequences of blockages that can be taken)"]
     [:li "Truncated search space size: r = -0.82 (the search space size up to length equal to that of the optimal solution)"]]]])
 
@@ -198,7 +199,7 @@
 ;; - There is a high dropout rate 
 ;; - There are large individual differences in performance on Tik Tik
 ;; - Our problem set is within subject abilities, albeit a little difficult
-;; - The truncated search space size is the strongest predictor of level difficulty, together with the optimal solution length
+;; - The truncated search space size is the strongest predictor of problem difficulty, together with the optimal solution length
 
 ;; ## Study 2
 ;; Goals:
@@ -210,10 +211,10 @@
 
 ;; Methods:
 
-;; - *23 levels*
+;; - *23 problems*
 ;; - *43 subjects* (online platform Prolific)
 ;; - about *1 hour* of total time
-;; - provide *optimal solution length* and *blockage limit* for each level
+;; - provide *optimal solution length* and *blockage limit* for each problem
 ;; - subjects received *1 bonus point* for a correct solution and *3 bonus points* for an optimal solution
 
 ;; ## Subject performance
@@ -244,13 +245,13 @@
          :=mark-color "black"}))]
   [:div {:style {:flex "30%"}}
    [:ul
-    [:li "36 subjects out of 43 completed all levels."]
+    [:li "36 subjects out of 43 completed all problems."]
     [:li "Stong correlation between number of solved and optimally solved problems."]
-    [:li "Levels that were solved (72.5%) were typically solved optimally (50.8%)"]
+    [:li "Problems that were solved (72.5%) were typically solved optimally (50.8%)"]
     [:li "Fraction of problems solved optimally between 20% and 80%."]
     ]]])
 
-;; ## Predictors of level difficulty
+;; ## Predictors of problem difficulty
 ^{:kindly/hide-code true}
 (kind/hiccup
  [:div {:style {:display "flex"}}
@@ -280,16 +281,20 @@
 ;; 2. We can find solutions with the *Tik Tik Solver*
 ;; 3. To incentivize participants to plan, we can introduce a *blockage limit*
 ;; 4. To reduce dropout rate, we can introduce a *time limit*
-;; 5. Level difficulty in Tik Tik is a function of the *optimal solution length* and the *truncated search space size*
+;; 5. Problem difficulty in Tik Tik is a function of the *optimal solution length* and the *truncated search space size*
 
 ^{:kindly/hide-code true}
 (kind/hiccup
  [:p "Made with:"
   [:ul
    [:li "Quil - Tik Tik Solver"]
-   [:li "Noj - data analysis"]
-   [:li "R - data analysis"]
-   [:li "Clay - data analysis + presentation"]]])
+   [:li "Noj"
+    [:ul
+     [:li "Clay - analysis notebook + presentation"]
+     [:li "Tablecloth - data analysis"]
+     [:li "Fastmath - statistics and logistic regression"]
+     [:li "Tableplot - visualitation"]]]
+   [:li "R - data analysis"]]])
 
 
 

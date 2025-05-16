@@ -2,19 +2,9 @@
 (ns analysis
   (:require [tablecloth.api :as tc]
             [tablecloth.column.api :as tcc]
-            [scicloj.clay.v2.api :as clay]
-            [clojure.java.io :as io]
-            [scicloj.tableplot.v1.hanami :as hanami]
-            [aerial.hanami.templates :as ht]
-            [scicloj.kindly.v4.kind :as kind]
             [scicloj.tableplot.v1.plotly :as plotly]
-            [tech.v3.dataset.print :as print]
-            [scicloj.metamorph.core :as mm]
-            [clojure.set :as set]
-            [tech.v3.dataset.modelling :as ds-mod]
             [fastmath.ml.regression :as reg]
-            [fastmath.stats :as stats]
-            [jsonista.core :as j]))
+            [fastmath.stats :as stats]))
 
 ;; ## Study 1 Analysis
 ;; ### Demographics
